@@ -43,7 +43,7 @@ h.mainFig = figure('Position',[ ...
     myGUI_width, ...
     myGUI_height]);  
 %set(h.mainFig,'MenuBar','None')%Remove default figure menubar
-set(h.mainFig,'ToolBar','None')%Remove default figure toolbar
+%set(h.mainFig,'ToolBar','None')%Remove default figure toolbar
 set(h.mainFig,'Resize','off')%prevent window from being resized
 set(h.mainFig,'Name','Camera Test')%prevent window from being resized
 %I could have placed all of these inside the above statement where I 
@@ -208,7 +208,7 @@ function updatePlot(h)
 %This is the function that that makes use off all data that 
 %has been stored by the controls in the GUI
 %[P,F] = pyramid(h.n);
-[P,F] = my_sphere(h.n);
+[P,F] = pyramid(h.n);
 W = h.width;
 H = h.height;
 FOV = pi/3;
