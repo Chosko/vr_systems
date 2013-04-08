@@ -20,8 +20,8 @@ azimuth = azimuth + pi/2;
 aspect_ratio = W/H;
 alpha = (W/2)/(tan(FOV/2));
 beta = alpha;% / aspect_ratio;
-cx = (W/2);%+ alpha*POV_translation(1);
-cy = (H/2);%+ beta*POV_translation(2);
+cx = (W/2) + alpha*POV_translation(1);
+cy = (H/2) + beta*POV_translation(2);
 
 K = [
         alpha,0,cx,0;
@@ -51,7 +51,7 @@ RX = [
 RT = [RY * RX, T;0,0,0,1];
 VIEW = K / RT;
 Pp_om = VIEW * [P;ones(1,length(P))];
-Pp = [(Pp_om(1,:)./Pp_om(3,:));(Pp_om(2,:)./Pp_om(3,:));-(Pp_om(3,:)./Pp_om(4,:))]
+Pp = [(Pp_om(1,:)./Pp_om(3,:));(Pp_om(2,:)./Pp_om(3,:));-(Pp_om(3,:).* 100)];
 
 end
 

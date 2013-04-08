@@ -7,7 +7,7 @@ function h = myGUI(sz)
 % also refer to these as widgets on occasion).
 
 %if user doesn't specify size, use the following as default
-if nargin < 1;sz = [1000 600];end
+if nargin < 1;sz = [1000 700];end
 myGUI_width = sz(1);%GUI width (pixels)
 myGUI_height = sz(2);%GUI height (pixels)
 
@@ -29,6 +29,11 @@ h.posz = 4;% coeficients for a*x^2+b*x+c
 h.targetx = 0;
 h.targety = 0;
 h.targetz = 0;
+%traslazione del punto di vista.
+h.povx = 0;
+h.povy = 0;
+h.povz = 0;
+h.FOV = pi/3;
 
 %=======================BEGIN CREATING LAYOUT=============================
 %To set the position of a control, you need to specify the following:
@@ -68,30 +73,50 @@ h.txt_targety = uicontrol('style','text','Position',[padx (myGUI_height-pady-4*(
     'string',['targy= ' num2str(h.targety)]);
 h.txt_targetz = uicontrol('style','text','Position',[padx (myGUI_height-pady-5*(widgetH+ipady)) 3*widgetH widgetH], ...
     'string',['targz= ' num2str(h.targetz)]);
+h.txt_FOV = uicontrol('style','text','Position',[padx (myGUI_height-pady-6*(widgetH+ipady)) 3*widgetH widgetH], ...
+    'string',['FOV= ' num2str(h.FOV)]);
+h.txt_povx = uicontrol('style','text','Position',[padx (myGUI_height-pady-27*(widgetH+ipady)) 3*widgetH widgetH], ...
+    'string',['povx= ' num2str(h.povx)]);
+h.txt_povy = uicontrol('style','text','Position',[padx (myGUI_height-pady-28*(widgetH+ipady)) 3*widgetH widgetH], ...
+    'string',['povy= ' num2str(h.povy)]);
+h.txt_povz = uicontrol('style','text','Position',[padx (myGUI_height-pady-29*(widgetH+ipady)) 3*widgetH widgetH], ...
+    'string',['povz= ' num2str(h.povz)]);
 
 %create sliders
 %slider StepSize = (max-min)/number_of_steps     ==>(use 40 steps)
 slider_width = myGUI_width-(2*padx+3*widgetH+ipadx);%all sliders to be this long
 h.slider_posx = uicontrol('style','slider', ...
     'Position',[(padx+3*widgetH+ipadx) (myGUI_height-pady-0*(widgetH+ipady)) slider_width widgetH], ...
-    'Min',-10,'Max',10,'Value',h.posx,'SliderStep',[0.025 0.025]);
+    'Min',-10,'Max',10,'Value',h.posx,'SliderStep',[0.01 0.01]);
 h.slider_posy = uicontrol('style','slider', ...
     'Position',[(padx+3*widgetH+ipadx) (myGUI_height-pady-1*(widgetH+ipady)) slider_width widgetH], ...
-    'Min',-10,'Max',10,'Value',h.posy,'SliderStep',[0.025 0.025]);
+    'Min',-10,'Max',10,'Value',h.posy,'SliderStep',[0.01 0.01]);
 h.slider_posz = uicontrol('style','slider', ...
     'Position',[(padx+3*widgetH+ipadx) (myGUI_height-pady-2*(widgetH+ipady)) slider_width widgetH], ...
-    'Min',-10,'Max',10,'Value',h.posz,'SliderStep',[0.025 0.025]);
+    'Min',-10,'Max',10,'Value',h.posz,'SliderStep',[0.01 0.01]);
 h.slider_targetx = uicontrol('style','slider', ...
     'Position',[(padx+3*widgetH+ipadx) (myGUI_height-pady-3*(widgetH+ipady)) slider_width widgetH], ...
-    'Min',-10,'Max',10,'Value',h.targetx,'SliderStep',[0.025 0.025]);
+    'Min',-10,'Max',10,'Value',h.targetx,'SliderStep',[0.01 0.01]);
 h.slider_targety = uicontrol('style','slider', ...
     'Position',[(padx+3*widgetH+ipadx) (myGUI_height-pady-4*(widgetH+ipady)) slider_width widgetH], ...
-    'Min',-10,'Max',10,'Value',h.targety,'SliderStep',[0.025 0.025]);
+    'Min',-10,'Max',10,'Value',h.targety,'SliderStep',[0.01 0.01]);
 h.slider_targetz = uicontrol('style','slider', ...
     'Position',[(padx+3*widgetH+ipadx) (myGUI_height-pady-5*(widgetH+ipady)) slider_width widgetH], ...
-    'Min',-10,'Max',10,'Value',h.targetz,'SliderStep',[0.025 0.025]);
+    'Min',-10,'Max',10,'Value',h.targetz,'SliderStep',[0.01 0.01]);
+h.slider_FOV = uicontrol('style','slider', ...
+    'Position',[(padx+3*widgetH+ipadx) (myGUI_height-pady-6*(widgetH+ipady)) slider_width widgetH], ...
+    'Min',0,'Max',pi,'Value',h.FOV,'SliderStep',[0.01 0.01]);
+h.slider_povx = uicontrol('style','slider', ...
+    'Position',[(padx+3*widgetH+ipadx) (myGUI_height-pady-27*(widgetH+ipady)) slider_width widgetH], ...
+    'Min',-10,'Max',10,'Value',h.povx,'SliderStep',[0.01 0.01]);
+h.slider_povy = uicontrol('style','slider', ...
+    'Position',[(padx+3*widgetH+ipadx) (myGUI_height-pady-28*(widgetH+ipady)) slider_width widgetH], ...
+    'Min',-10,'Max',10,'Value',h.povy,'SliderStep',[0.01 0.01]);
+h.slider_povz = uicontrol('style','slider', ...
+    'Position',[(padx+3*widgetH+ipadx) (myGUI_height-pady-29*(widgetH+ipady)) slider_width widgetH], ...
+    'Min',-10,'Max',10,'Value',h.povz,'SliderStep',[0.01 0.01]);
 
-editH = (myGUI_height-pady-25*(widgetH+ipady));%height to place edit boxes at
+editH = (myGUI_height-pady-7*(widgetH+ipady));%height to place edit boxes at
 %create lables for edit boxes for width height and number of points
 boxColour = get(h.mainFig,'Color');%set the background of these boxes the same as mainFig
 h.txt_width = uicontrol('style','text','Position',[(padx+0*(widgetH+ipadx)) editH 2*widgetH widgetH], ...
@@ -118,6 +143,10 @@ set(h.slider_posz,'callback',{@slider_posz_Callback h});
 set(h.slider_targetx,'callback',{@slider_targetx_Callback h});
 set(h.slider_targety,'callback',{@slider_targety_Callback h});
 set(h.slider_targetz,'callback',{@slider_targetz_Callback h});
+set(h.slider_FOV,'callback',{@slider_FOV_Callback h});
+set(h.slider_povx,'callback',{@slider_povx_Callback h});
+set(h.slider_povy,'callback',{@slider_povy_Callback h});
+set(h.slider_povz,'callback',{@slider_povz_Callback h});
 %set callbacks for edit boxes
 set(h.edit_width,'callback',{@edit_width_Callback h});
 set(h.edit_height,'callback',{@edit_height_Callback h});
@@ -182,6 +211,42 @@ h.targetz = val;
 guidata(hObject,h);
 updatePlot(h);
 
+function slider_FOV_Callback(hObject, eventdata, h)
+h = guidata(hObject);
+val = get(hObject,'Value');
+str = sprintf('FOV=%0.1f',val);
+set(h.txt_FOV,'String',str);
+h.FOV = val;
+guidata(hObject,h);
+updatePlot(h);
+
+function slider_povx_Callback(hObject, eventdata, h)
+h = guidata(hObject);%get the entire handle structure for the GUI
+val = get(hObject,'Value');%get the value from the slider
+str = sprintf('povx=%0.1f',val);%create a string
+set(h.txt_povx,'String',str);%put string in text box for a
+h.povx = val;%update handles
+guidata(hObject,h);%update entire handle structure
+updatePlot(h);%replot
+
+function slider_povy_Callback(hObject, eventdata, h)
+h = guidata(hObject);
+val = get(hObject,'Value');
+str = sprintf('povy=%0.1f',val);
+set(h.txt_povy,'String',str);
+h.povy = val;
+guidata(hObject,h);
+updatePlot(h);
+
+function slider_povz_Callback(hObject, eventdata, h)
+h = guidata(hObject);
+val = get(hObject,'Value');
+str = sprintf('povz=%0.1f',val);
+set(h.txt_povz,'String',str);
+h.povz = val;
+guidata(hObject,h);
+updatePlot(h);
+
 function edit_width_Callback(hObject, eventdata, h)
 h = guidata(hObject);%get the entire handle structure for the GUI
 width = str2double(get(hObject,'String'));%get the value of the box
@@ -211,10 +276,10 @@ function updatePlot(h)
 [P,F] = pyramid(h.n);
 W = h.width;
 H = h.height;
-FOV = pi/3;
+FOV = h.FOV;
 position = [h.posx,h.posy,h.posz];
 target = [h.targetx,h.targety,h.targetz];
-POV_translation = [0,0,0];
+POV_translation = [h.povx,h.povy,h.povz];
 h = guidata(h.mainFig);%get the entire handle structure for the GUI
 cla(h.axes);
 render(P,F,'flat',position,target,W,H,FOV,POV_translation);
